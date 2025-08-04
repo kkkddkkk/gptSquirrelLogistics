@@ -12,7 +12,13 @@ export default function Header() {
         <>
             <AppBar position="static" color="default">
                 <Toolbar className={styles.headerContainer}>
-                    <Typography variant="h6">Squirrel Logistics</Typography>
+                    <Typography
+                        variant="h6"
+                        onClick={() => navigate("/")}
+                        sx={{ cursor: "pointer" }}
+                    >
+                        Squirrel Logistics
+                    </Typography>
                     <div className={styles.navButtons}>
                         <Button color="inherit">서비스</Button>
                         <Button color="inherit">공지사항</Button>
