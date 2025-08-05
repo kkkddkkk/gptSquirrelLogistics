@@ -1,12 +1,11 @@
 import { useRef } from "react";
-import { useKakaoRouteMap } from "../../hook/DeliveryMap/useKakaoRouteMap";
-import './LiveMapComponent.css';
+import { useStaticRouteMap } from "../../hook/DeliveryMap/useKakaoRouteMap";
 
-const LiveMapComponent = ({ currentPos, destination, onRouteUpdate }) => {
+const RouteMapComponent = ({startAddress, waypoints, endAddress, onRouteUpdate}) => {
     const mapRef = useRef(null);
 
     // 지도 생성 및 경로 표시 (커스텀 훅)
-    useKakaoRouteMap(mapRef, "driver001", onRouteUpdate);
+    useStaticRouteMap(mapRef, startAddress, waypoints, endAddress, onRouteUpdate);
 
     return (
         <div
@@ -20,4 +19,4 @@ const LiveMapComponent = ({ currentPos, destination, onRouteUpdate }) => {
     );
 };
 
-export default LiveMapComponent;
+export default RouteMapComponent;
