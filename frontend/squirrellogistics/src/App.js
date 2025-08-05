@@ -1,17 +1,15 @@
-import React from "react";
-import Button from "@mui/material/Button"
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import SupportLayout from './pages/Support/SupportLayout';
+
 function App() {
   return (
-    <div>
-      <header>
-        <p>
-          main
-        </p>
-
-          Learn React
-          <Button variant="contained"> 버튼 테스트</Button>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/support/*" element={<SupportLayout />} />
+        <Route path="*" element={<Navigate to="/support" replace />} />
+      </Routes>
+    </Router>
   );
 }
 
