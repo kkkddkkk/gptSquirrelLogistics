@@ -1,12 +1,18 @@
-import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
-import AppRoutes from "./routes/AppRoutes"; // 경로 수정
+// App.js
+import { Routes, Route } from "react-router-dom";
+import Layout from "./pages/Layout/Layout";
+import RegisterPage from "./pages/Layout/RegisterPage";
+import ScrollToTop from "./components/ScrollToTop";
 
-const App = () => {
+function App() {
   return (
-    <Router>
-      <AppRoutes />
-    </Router>
+    <>
+      <ScrollToTop/>
+      <Routes>
+        <Route path="/" element={<Layout />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    </>
   );
 };
 
