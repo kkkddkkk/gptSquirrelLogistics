@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // App.js
 import { Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout/Layout";
@@ -13,6 +14,20 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </>
+=======
+
+function App() {
+  return (
+    <div>
+      <header>
+        <p>
+          main
+        </p>
+
+          Learn React
+      </header>
+    </div>
+>>>>>>> parent of 9149a37 (chore: MUI 설치)
   );
 };
 
