@@ -1,57 +1,105 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  Paper,
+  Button,
+  IconButton,
+  Stack,
+  Tooltip,
+  TextField,
+  InputAdornment,
+  Divider,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
+// import { getFaqs, deleteFaq } from "./faqApi";
 
-export default function FAQList() {
+const FAQList = () => {
+  const [faqs, setFaqs] = useState([]);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
-  const [faqItems, setFaqItems] = useState([
-    { id: 1, title: '배송은 얼마나 걸리나요?', content: '보통 2~3일 내에 배송됩니다.' },
-    { id: 2, title: '반품 정책은 어떻게 되나요?', content: '상품 수령 후 7일 이내 가능합니다.' },
-  ]);
+
+  // mock 데이터
+  useEffect(() => {
+    setFaqs([
+      { id: 1, question: "배송은 얼마나 걸리나요?", answer: "2~3일 정도 소요됩니다." },
+      { id: 2, question: "반품 정책은 어떻게 되나요?", answer: "7일 이내 환불 가능합니다." },
+    ]);
+  }, []);
 
   const handleDelete = (id) => {
-    if (window.confirm('FAQ를 삭제하시겠습니까?')) {
-      setFaqItems(faqItems.filter(i => i.id !== id));
-    }
+    // deleteFaq(id);
+    setFaqs((prev) => prev.filter((faq) => faq.id !== id));
   };
 
-  const handleAdd = () => {
-    const newId = faqItems.length ? Math.max(...faqItems.map(i => i.id)) + 1 : 1;
-    const newItem = { id: newId, title: `새 FAQ 제목 ${newId}`, content: '' };
-    setFaqItems([newItem, ...faqItems]);
-    navigate(`./${newId}`);
-  };
+  const filteredFaqs = faqs.filter((faq) =>
+    faq.question.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-12">
-      <div className="max-w-3xl w-full p-6 bg-white rounded-md shadow-md">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">FAQ 목록</h2>
-        <button
-          onClick={handleAdd}
-          className="mb-6 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded shadow"
-        >
-          FAQ 등록
-        </button>
-        <ul className="space-y-4">
-          {faqItems.map(({ id, title }) => (
-            <li
-              key={id}
-              onClick={() => navigate(`./${id}`)}
-              className="flex justify-between items-center p-4 border border-gray-200 rounded cursor-pointer hover:shadow-lg hover:border-blue-500 transition"
-            >
-              <span className="text-lg font-medium text-gray-900">{title}</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(id);
-                }}
-                className="text-red-600 hover:text-red-800 font-semibold"
-              >
-                삭제
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    <Box p={4}>
+      <Typography variant="h4" fontWeight={700} gutterBottom>
+        고객지원
+      </Typography>
+      <Divider sx={{ mb: 4 }} />
+
+      <Paper elevation={3} sx={{ p: 3 }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+          <Typography variant="h6" fontWeight={600}>
+            FAQ 목록
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => navigate("new")}
+            sx={{ backgroundColor: "#113F67" }}
+          >
+            FAQ 등록
+          </Button>
+        </Stack>
+
+        <TextField
+          fullWidth
+          placeholder="질문 검색"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          sx={{ mb: 2 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        {filteredFaqs.length > 0 ? (
+          filteredFaqs.map((faq) => (
+            <Paper key={faq.id} sx={{ p: 2, mb: 1, display: "flex", justifyContent: "space-between" }}>
+              <Box>
+                <Typography variant="subtitle1" fontWeight={600}>
+                  Q. {faq.question}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  A. {faq.answer}
+                </Typography>
+              </Box>
+              <Tooltip title="삭제">
+                <IconButton color="error" onClick={() => handleDelete(faq.id)}>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </Paper>
+          ))
+        ) : (
+          <Typography color="text.secondary">검색 결과가 없습니다.</Typography>
+        )}
+      </Paper>
+    </Box>
   );
-}
+};
+
+export default FAQList;

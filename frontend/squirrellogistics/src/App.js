@@ -1,16 +1,13 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import SupportLayout from './pages/Support/SupportLayout';
+import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import AppRoutes from "./routes/AppRoutes"; // 경로 수정
 
-function App() {
+const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/support/*" element={<SupportLayout />} />
-        <Route path="*" element={<Navigate to="/support" replace />} />
-      </Routes>
+      <AppRoutes />
     </Router>
   );
-}
+};
 
 export default App;

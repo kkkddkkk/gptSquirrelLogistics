@@ -1,53 +1,83 @@
-// src/pages/Support/Notice/NoticeList.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { getNotices, deleteNotice } from "./noticeApi";
+import { useNavigate } from "react-router-dom";
+import {
+  Box, Button, Table, TableBody, TableCell, TableContainer, TableHead,
+  TableRow, Typography, Stack, Paper, TextField, IconButton, Pagination
+} from "@mui/material";
 
-export default function NoticeList() {
+const ITEMS_PER_PAGE = 10;
+
+const NoticeList = () => {
+  const [notices, setNotices] = useState([]);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const navigate = useNavigate();
-  const [noticeItems, setNoticeItems] = useState([
-    { id: 1, title: '시스템 점검 안내', content: '2025년 8월 1일 시스템 점검이 예정되어 있습니다.' },
-    { id: 2, title: '신규 서비스 출시', content: '새로운 물류 서비스가 추가되었습니다.' },
-  ]);
 
-  const handleDelete = (id) => {
-    if (window.confirm('공지사항을 삭제하시겠습니까?')) {
-      setNoticeItems(noticeItems.filter(i => i.id !== id));
-    }
+  useEffect(() => {
+    getNotices().then(setNotices);
+  }, []);
+
+  const handleDelete = async (id) => {
+    await deleteNotice(id);
+    setNotices(prev => prev.filter(n => n.id !== id));
   };
 
-  const handleAdd = () => {
-    const newId = noticeItems.length ? Math.max(...noticeItems.map(i => i.id)) + 1 : 1;
-    const newItem = { id: newId, title: `새 공지 ${newId}`, content: '' };
-    setNoticeItems([newItem, ...noticeItems]);
-    navigate(`./${newId}`);
-  };
+  const filtered = notices.filter(n => n.title.toLowerCase().includes(search.toLowerCase()));
+  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4">공지사항 목록</h2>
-      <button onClick={handleAdd} className="bg-blue-600 text-white px-4 py-2 rounded mb-4">
-        공지 등록
-      </button>
-      <ul>
-        {noticeItems.map(({ id, title }) => (
-          <li
-            key={id}
-            className="flex justify-between border-b py-2 cursor-pointer hover:bg-gray-100"
-            onClick={() => navigate(`./${id}`)}
-          >
-            <span>{title}</span>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete(id);
-              }}
-              className="text-red-600 hover:underline"
-            >
-              삭제
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Box p={4}>
+      <Typography variant="h4" gutterBottom>📢 공지사항 관리</Typography>
+      <Stack direction="row" justifyContent="space-between" mb={2}>
+        <TextField
+          size="small"
+          placeholder="제목 검색"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+        />
+        <Button variant="contained" onClick={() => navigate("new")}>+ 새 공지</Button>
+      </Stack>
+      <Paper>
+        <TableContainer>
+          <Table>
+            <TableHead sx={{ backgroundColor: "#113F67" }}>
+              <TableRow>
+                <TableCell sx={{ color: "#fff" }}>제목</TableCell>
+                <TableCell sx={{ color: "#fff" }}>작성일</TableCell>
+                <TableCell align="right" sx={{ color: "#fff" }}>관리</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginated.map((notice) => (
+                <TableRow key={notice.id} hover>
+                  <TableCell>{notice.title}</TableCell>
+                  <TableCell>{notice.createdAt}</TableCell>
+                  <TableCell align="right">
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                      <Button size="small" onClick={() => navigate(`${notice.id}`)}>수정</Button>
+                      <Button size="small" color="error" onClick={() => handleDelete(notice.id)}>삭제</Button>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {paginated.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">결과가 없습니다.</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Stack alignItems="center" m={2}>
+          <Pagination count={Math.ceil(filtered.length / ITEMS_PER_PAGE)} page={page} onChange={(_, v) => setPage(v)} />
+        </Stack>
+      </Paper>
+    </Box>
   );
-}
+};
+
+export default NoticeList;
