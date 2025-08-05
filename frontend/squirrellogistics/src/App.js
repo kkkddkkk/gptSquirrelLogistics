@@ -1,5 +1,4 @@
-import React from "react";
-import Button from "@mui/material/Button"
+
 function App() {
   return (
     <div>
@@ -9,7 +8,6 @@ function App() {
         </p>
 
           Learn React
-          <Button variant="contained"> 버튼 테스트</Button>
       </header>
     </div>
   );
